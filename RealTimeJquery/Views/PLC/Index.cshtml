@@ -1,0 +1,99 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<br /><br />
+<p></p>
+
+<input type="button" value="Getir" onclick="GetValue()"/>
+<script type="text/javascript">
+    $(document).ready(function () {
+        GetData();
+        setInterval(GetValue,2000);
+    });
+   
+   
+    function GetValue() {
+        @*var number = @ViewBag.ip;
+        console.log("Number is: " + number);*@
+        @*var model = @Html.Raw(@ViewBag.FooObj);*@ 
+        
+        $.ajax({
+            async: true,
+            type: 'GET',
+            url: '/PLC/GetValue',
+            dataType: 'JSON',
+            contentType: 'application/json; charset=utf8',
+            success: function (response) {
+                if (response.Success) {
+                    $('#ItemValue' + 1 + '').html(response.Data);
+                }
+            },
+            error: function () {
+                alert('Data Okunamadı');
+            }
+        });
+    }
+    function GetData() {
+        var BindPlc
+        $.ajax({
+            async: true,
+            type: 'GET',
+            url: '/PLC/GetData',
+            dataType: 'JSON',
+            contentType: 'application/json; charset=utf8',
+            success: function (response) {
+                if (response.Success) {
+                    $.each(response.Data, function (index, value) {
+                        BindPlc += '<tr><td >' +
+                            value.ID +                            '</td ><td >' +
+                            value.ItemCommand +
+                            '</td><td >' +
+                            value.ItemAdress +
+                            '</td><td >' +
+                            value.ItemDataType +
+                            '</td><td id="ItemValue' + index + '">' +
+                            '</td></tr>'
+                    });
+                    $('#tablePlc').append(BindPlc);
+                }
+
+            },
+            error: function () {
+                alert('Data Okunamadı');
+            }
+        });
+    }
+</script>
+
+<style type="text/css">
+    #tablePlc {
+        border: 1px solid #ccc;
+        font-size: 20px;
+        font-family: Arial;
+    }
+        #tablePlc tr th {
+            background-color: #B8DBFD;
+            text-align: center;
+        }
+        #tablePlc tr td {
+            width: 300px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+</style>
+
+<table id="tablePlc" cellpadding="5" cellspacing="0">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Item Command</th>
+            <th>Item Adress</th>
+            <th>Item Data Type</th>
+            <th>Item Value</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>

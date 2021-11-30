@@ -1,0 +1,83 @@
+﻿@using RealTimeJquery.ViewModel
+@model List<Deneme>
+@{
+    ViewBag.Title = "Index";
+}
+
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<br>
+<br>
+<p>@ViewBag.P</p>
+<p>@ViewBag.sayi</p>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        GetData();
+        setInterval(function () {
+            GetVariable();
+        }, 1000);
+    });
+    function GetVariable() {
+        $.ajax({
+            async: true,
+            type: 'GET',
+            url: '/RealTimeTable/GetVariable',
+            dataType: 'JSON',
+            contentType: 'applicaiton/json; charset-utf8',
+            success: function (response) {
+                $('#Variable' + 1 + '').html(response.Data)
+
+
+            }
+        });
+    }
+
+    function GetData() {
+        var BindDeneme = "";
+        $.ajax({
+            async: true,
+            type: 'GET',
+            url: '/RealTimeTable/CreateDenemeList',
+            dataType: 'JSON',
+            contentType: 'application/json; charset-utf8',
+            success: function (response) {
+                var j = 0;
+                if (response.Success) {
+                    $.each(response.Data, function (index, value) {
+                        BindDeneme += '<tr><td>' +
+                            value.Id +
+                            '</td><td>' +
+                            value.Name +
+                            '</td><td>' +
+                            value.Surname +
+                            '</td><td>' +
+                            value.Phone +
+                            '</td><td id="Variable' + j + '">' +
+                            '</td></tr>'
+                        j = j + 1;
+                    });
+                    $('#denemeTable').append(BindDeneme);
+                }
+            },
+            error: function () {
+                alert("Hata geldi");
+            }
+        });
+    }
+</script>
+
+<table class="table table-bordered" id="denemeTable">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Phone</th>
+            <th>Variable</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<br />
